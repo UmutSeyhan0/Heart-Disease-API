@@ -3,21 +3,21 @@
 ## Project Overview
 
 This project is a machine learning–based heart disease prediction system.
-It trains a classification model on medical data and exposes the model through a REST API using FastAPI.
+It trains classification models on medical data and exposes the best-performing model through a REST API using FastAPI.
 
-The system predicts the probability of heart disease based on patient health metrics.
+The system predicts the probability of heart disease based on patient health metrics and is designed with a focus on **reducing false negatives**, which is critical in medical applications.
 
 ---
 
 ## Features
 
 * Trained machine learning models (Logistic Regression, Random Forest)
-* Reduced false negatives using threshold tuning
+* Threshold tuning to reduce false negatives
 * Model evaluation using:
 
   * Confusion Matrix
   * Precision, Recall, F1-score
-  * ROC-AUC
+  * Accuracy
 * REST API deployment with FastAPI
 * Interactive Swagger UI for testing
 
@@ -30,13 +30,15 @@ The model is trained on a heart disease dataset containing features such as:
 * Age
 * Sex
 * Chest pain type (cp)
-* Blood pressure (trestbps)
+* Resting blood pressure (trestbps)
 * Cholesterol (chol)
 * Maximum heart rate (thalach)
 * Exercise-induced angina (exang)
-* And other clinical indicators
+* ST depression (oldpeak)
+* Number of major vessels (ca)
+* Thalassemia (thal)
 
-Target:
+**Target:**
 
 * `0` → No heart disease
 * `1` → Heart disease risk
@@ -45,13 +47,29 @@ Target:
 
 ## Model Strategy
 
-In medical applications, **false negatives (FN)** are more dangerous than false positives.
+In medical prediction systems, **false negatives (FN)** are more dangerous than false positives because:
+
+* A false negative means a sick patient is classified as healthy.
+* This may delay diagnosis and treatment.
 
 Therefore:
 
-* Model threshold was reduced to **0.3**
-* This increases recall for patients with heart disease
-* Reduces the chance of missing risky patients
+* The decision threshold was reduced to **0.3**.
+* This increases recall for patients with heart disease.
+* Reduces the chance of missing high-risk patients.
+
+---
+
+## Model Performance
+
+**Random Forest (Test Set Results):**
+
+* Accuracy: **0.85**
+* Precision (heart disease): **0.81**
+* Recall (heart disease): **0.92**
+* F1-score: **0.86**
+
+This configuration prioritizes **high recall** to minimize missed diagnoses.
 
 ---
 
@@ -62,6 +80,20 @@ Therefore:
 * FastAPI
 * Joblib
 * Uvicorn
+
+---
+
+## Project Structure
+
+```
+heart-disease-api/
+│
+├── app.py            # FastAPI application
+├── train.py          # Model training script
+├── model.pkl         # Trained model
+├── requirements.txt
+└── README.md
+```
 
 ---
 
@@ -97,7 +129,7 @@ http://127.0.0.1:8000/docs
 
 ## Example API Request
 
-POST `/predict`
+**POST** `/predict`
 
 ```json
 {
@@ -119,7 +151,7 @@ POST `/predict`
 
 ---
 
-## Output
+## Example Output
 
 ```json
 {
@@ -131,10 +163,18 @@ POST `/predict`
 
 ---
 
+## Future Improvements
+
+* Hyperparameter tuning
+* Cross-validation for more robust evaluation
+* Model versioning
+* Docker containerization
+* Cloud deployment (AWS, GCP, or Render)
+
+---
+
 ## Author
 
-Computer Engineering student focusing on:
-
-* Machine Learning
-* Backend development
-* ML-powered applications
+Umut Seyhan
+Computer Engineering Student
+Interested in Machine Learning, Mobile Development, and Backend Systems
